@@ -1,14 +1,19 @@
 services:
   web:
     build: .
-    image: node:22-alpine
-    user: root
+    # image: node:22-alpine
+    # Run the web process as the host user so it can read mounted files under rootless/SELinux setups
+    user: root  
+    working_dir: /app
     ports:
       - "3000:3000"
     volumes:
-      - .:/app:Z
+      - ./src:/app/src:z
+      - ./prisma:/app/prisma:z
+      - ./next.config.ts:/app/next.config.ts:z
       - /app/node_modules
-    command: sh -c "npx prisma generate && npm run dev -- -H 0.0.0.0"
+    # Run the Next dev server directly (prisma generate happens at image build time)
+    command: ["npm", "run", "dev", "--", "-H", "0.0.0.0"]
     environment:
       - DATABASE_URL=postgresql://user:password@db:5432/main_db
       - REDIS_URL=redis://redis:6379
@@ -24,12 +29,10 @@ services:
   worker:
     build: .
     user: root
-    # 🛠️ ট্রিক ১: ডকারকে সরাসরি ওয়ার্কিং ডিরেক্টরি সেট করে দিন
     working_dir: /app
-    # 🛠️ ট্রিক ২: cd করার ঝামেলা বাদ, সরাসরি ফাইল রান করুন
     command: tsx ./src/worker.ts
     volumes:
-      - .:/app:Z # বড় হাতের Z-ই থাকবে SELinux এর জন্য
+      - .:/app:z
       - /app/node_modules
     environment:
       - NODE_ENV=development
