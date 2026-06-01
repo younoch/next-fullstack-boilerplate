@@ -1,15 +1,14 @@
-export {};
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
+import type { TaskMessage } from "@/types/queue";
+import type { TaskLog } from "@prisma/client";
 
-const processAndSaveTask = async (content: any) => {
-  return await prisma.taskLog.create({
+export const processAndSaveTask = async (
+  content: TaskMessage
+): Promise<TaskLog> => {
+  return prisma.taskLog.create({
     data: {
       taskName: content.task || "unknown",
       email: content.email || "no-email",
-    }
+    },
   });
 };
-
-// এটিকে এক্সপোর্ট করে দিন
-module.exports = { processAndSaveTask };

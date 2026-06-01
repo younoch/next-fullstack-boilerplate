@@ -1,4 +1,4 @@
-import amqp, { AmqpConnectionManager, ChannelWrapper } from 'amqp-connection-manager';
+import amqp, { AmqpConnectionManager, ChannelWrapper, type Channel } from 'amqp-connection-manager';
 
 const url = process.env.RABBITMQ_URL || 'amqp://localhost';
 
@@ -13,7 +13,7 @@ connection.on('connectFailed', (err) => console.log('❌ RabbitMQ Connect Failed
 
 export const channelWrapper: ChannelWrapper = connection.createChannel({
   json: true,
-  setup: (channel: any) => {
+  setup: (channel: Channel) => {
     return channel.assertQueue('test-queue', { durable: true });
   },
 });
