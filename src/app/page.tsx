@@ -1,6 +1,10 @@
 "use client";
 import { useEffect, useState } from 'react';
-import io from 'socket.io-client';
+import { io, type Socket } from 'socket.io-client';
+import type {
+  ClientToServerEvents,
+  ServerToClientEvents,
+} from '@/types/queue';
 
 export default function Home() {
   const [messages, setMessages] = useState<string[]>([]);
@@ -10,7 +14,7 @@ export default function Home() {
     fetch('/api/socket');
 
     // ২. সকেট কানেকশন ইনিশিয়েট করা
-    const socket = io({
+    const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
       path: '/api/socket',
     });
 
