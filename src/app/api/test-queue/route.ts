@@ -1,4 +1,5 @@
 import { channelWrapper } from "@/lib/rabbitmq";
+import { QUEUES } from "@/lib/queues";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -10,7 +11,7 @@ export async function GET() {
     };
 
     // সরাসরি মেসেজ পাঠানো
-    await channelWrapper.sendToQueue('test-queue', message);
+    await channelWrapper.sendToQueue(QUEUES.TEST.name, message);
 
     return NextResponse.json({ success: true, message: "Sent via Modern Library!" });
   } catch (error) {

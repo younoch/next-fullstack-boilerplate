@@ -1,0 +1,47 @@
+// prisma/tax.prisma
+model TaxRule {
+  id          String   @id @default(uuid())
+  countryId   String
+  country     Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  fiscalYear  Int
+  rulesConfig Json     // Dynamic structural rules JSONB
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([countryId, fiscalYear])
+}
+
+model TaxTask {
+  id             String          @id @default(uuid())
+  status         TaskStatus      @default(PENDING)
+  payload        Json            // Original raw input payload
+  result         Json?           // Computed breakdown metrics
+  errorMessage   String?
+  socketRoomId   String?         // Target Socket.io client
+  calculationId  String?         @unique
+  calculation    TaxCalculation? @relation(fields: [calculationId], references: [id], onDelete: SetNull)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model TaxCalculation {
+  id              String   @id @default(uuid())
+  countryId       String
+  country         Country  @relation(fields: [countryId], references: [id])
+  fiscalYear      Int
+  grossIncome     Decimal  @db.Decimal(14, 2) // absolute financial accuracy
+  totalDeductions Decimal  @db.Decimal(14, 2)
+  taxableIncome   Decimal  @db.Decimal(14, 2)
+  taxDue          Decimal  @db.Decimal(14, 2)
+  metaData        Json?
+  task            TaxTask?
+  createdAt       DateTime @default(now())
+}
+
+enum TaskStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}

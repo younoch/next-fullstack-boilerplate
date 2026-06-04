@@ -1,7 +1,6 @@
-export {}; 
-
+// src/workers/test-worker.ts
+import { processAndSaveTask } from '../services/taskService';
 export const testWorkerHandler = async (content: any, socket: any) => {
-  const { processAndSaveTask } = require('../services/taskService');
 
   console.log("📥 [Test Worker] Processing:", content);
   
@@ -17,3 +16,5 @@ export const testWorkerHandler = async (content: any, socket: any) => {
   });
   console.log("🚀 [Test Worker] Socket event emitted!");
 };
+
+export default testWorkerHandler;
