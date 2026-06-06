@@ -74,7 +74,13 @@ export const completeTaxTask = async (
       data: {
         status: TaskStatus.COMPLETED,
         calculationId: calculation.id,
-        result: { taxDue: calculationData.taxDue.toString() } as Prisma.InputJsonValue,
+        result: {
+          grossIncome: calculationData.grossIncome.toString(),
+          totalDeductions: calculationData.totalDeductions.toString(),
+          taxableIncome: calculationData.taxableIncome.toString(),
+          taxDue: calculationData.taxDue.toString(),
+          metaData: calculationData.metaData ?? null,
+        } as Prisma.InputJsonValue,
       },
     });
   });
