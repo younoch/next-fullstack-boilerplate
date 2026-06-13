@@ -6,21 +6,11 @@ export default function Home() {
   const [messages, setMessages] = useState<string[]>([]);
 
   useEffect(() => {
-    // ১. প্রথমে নেক্সট জেএস-এর সকেট রুটটি হিট করে সার্ভার সচল করা
-    fetch('/api/socket');
-
-    // ২. সকেট কানেকশন ইনিশিয়েট করা
-    const socket = io({
-      path: '/api/socket',
-    });
-
-    socket.on('connect', () => {
-      console.log('🟢 Connected to Web Socket Server');
-    });
+    const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+    const socket = io(wsUrl || undefined, { transports: ['websocket'] });
 
     // ৩. ওয়ার্কারের পাঠানো 'task_finished' ইভেন্ট শোনা
     socket.on('task_finished', (data) => {
-      console.log('🎉 Live Update:', data);
       setMessages((prev) => [...prev, `Task ${data.taskName} successfully processed!`]);
     });
 

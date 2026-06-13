@@ -75,7 +75,7 @@ export default function TaxCalculator() {
       const response = await initiateTaxCalculation(formData);
 
       if (response.success && response.taskId) {
-        console.log(`✉️ টাস্ক কিউতে ঢুকেছে। আইডি: ${response.taskId}, পোলিং শুরু হচ্ছে...`);
+        // task queued, start polling
         pollTaskStatus(response.taskId);
       } else {
         setError(response.error || 'টাস্ক তৈরি করা যায়নি।');

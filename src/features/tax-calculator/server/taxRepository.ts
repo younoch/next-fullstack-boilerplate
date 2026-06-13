@@ -1,14 +1,5 @@
-// src/services/taxService.ts
 import prisma from '@/lib/prisma';
 import { TaskStatus, Prisma } from '@prisma/client';
-
-interface TaxCalculationPayload {
-  countryId: string;
-  fiscalYear: number;
-  grossIncome: number;
-  totalDeductions: number;
-  metaData?: Record<string, any>;
-}
 
 function parseFiscalYear(value: string | number): number {
   if (typeof value === 'number') return value;
@@ -32,7 +23,7 @@ async function resolveCountryId(
   return created.id;
 }
 
-export const createTaxTask = async (payload: TaxCalculationPayload, socketRoomId?: string) => {
+export const createTaxTask = async (payload: any, socketRoomId?: string) => {
   return await prisma.taxTask.create({
     data: {
       status: TaskStatus.PENDING,
@@ -92,6 +83,17 @@ export const failTaxTask = async (taskId: string, errorMessage: string) => {
     data: {
       status: TaskStatus.FAILED,
       errorMessage,
+    },
+  });
+};
+
+export const getTaxTask = async (taskId: string) => {
+  return await prisma.taxTask.findUnique({
+    where: { id: taskId },
+    select: {
+      status: true,
+      result: true,
+      errorMessage: true,
     },
   });
 };

@@ -4,15 +4,16 @@ import { io } from 'socket.io-client';
 import { assertAllQueues, QUEUES } from './lib/queues';
 import { testWorkerHandler } from './workers/test-worker';
 import { taxWorkerHandler } from './workers/tax-worker';
+import { logger } from './lib/logger';
 
 const url = process.env.RABBITMQ_URL || 'amqp://localhost';
 
-const socket = io('http://web:3000', {
-  path: '/api/socket',
+const WEBSOCKET_URL = process.env.WEBSOCKET_URL || 'http://websocket:3000';
+const socket = io(WEBSOCKET_URL, {
   transports: ['websocket'],
 });
 
-socket.on('connect', () => console.log('📡 [Global Worker] Connected to Socket.io Server'));
+socket.on('connect', () => logger.info('📡 [Global Worker] Connected to Socket.io Server'));
 
 const connection = amqp.connect([url]);
 
@@ -29,7 +30,7 @@ const channelWrapper = connection.createChannel({
         channel.ack(msg);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        console.error('❌ Test Queue Failed:', message);
+        logger.error({ err: message }, '❌ Test Queue Failed');
         channel.nack(msg, false, false);
       }
     });
@@ -42,7 +43,7 @@ const channelWrapper = connection.createChannel({
         channel.ack(msg);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        console.error('❌ Tax Queue Failed:', message);
+        logger.error({ err: message }, '❌ Tax Queue Failed');
         channel.nack(msg, false, false);
       }
     });
@@ -50,5 +51,5 @@ const channelWrapper = connection.createChannel({
 });
 
 channelWrapper.waitForConnect().then(() => {
-  console.log('👷 Global Worker Manager is running and listening to all registered queues...');
+  logger.info('👷 Global Worker Manager is running and listening to all registered queues...');
 });
