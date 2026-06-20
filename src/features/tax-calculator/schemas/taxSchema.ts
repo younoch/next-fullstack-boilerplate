@@ -1,3 +1,4 @@
+// src/features/tax-calculator/schemas/taxSchema.ts
 import { z } from 'zod';
 
 export const taxValidationSchema = z
@@ -29,4 +30,4 @@ export const taxValidationSchema = z
     path: ["investments"], // এরর মেসেজটি সরাসরি investments ইনপুটের নিচে দেখাবে
   });
 
-export type TaxFormInputs = z.input<typeof taxValidationSchema>;
+export type TaxFormInputs = z.infer<typeof taxValidationSchema>;

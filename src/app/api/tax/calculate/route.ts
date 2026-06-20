@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import { channelWrapper } from '@/lib/rabbitmq';
 import { QUEUES } from '@/lib/queues';
-import { createTaxTask } from '@/features/tax-calculator/server/taxService';
+import { createTaxTask } from '@/features/tax-calculator/server/taxRepository';
 
 export async function POST(request: Request) {
   try {
