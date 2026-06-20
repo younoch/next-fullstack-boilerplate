@@ -47,3 +47,8 @@ export const checkTaxTaskStatus = async (taskId: string): Promise<TaxTaskStatusR
   const response = await axios.get<TaxTaskStatusResponse>(`/api/tax/status/${taskId}`);
   return response.data;
 };
+
+export const fetchTaxBreakdown = async (calculationId: string) => {
+  const response = await axios.get(`/api/tax/breakdown/${calculationId}`);
+  return response.data;
+}

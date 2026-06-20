@@ -1,3 +1,4 @@
+// src/app/tax-calculator/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -26,7 +27,7 @@ export default function TaxCalculator() {
     },
   });
 
-  // 🔄 প্রোডাকশন-গ্রেড পোলিং ইঞ্জিন (Axios সার্ভিস দিয়ে কানেক্টেড)
+  // 🔄 প্রোডাকশন-গ্রেড পোলিং engine (Polling Engine)
   const pollTaskStatus = async (taskId: string, currentRetry = 0) => {
     const MAX_RETRIES = 15; // সর্বোচ্চ ১৫ বার চেক করবে (১৫ x ২ সেকেন্ড = ৩০ সেকেন্ড)
     const POLLING_INTERVAL = 2000; 
@@ -38,11 +39,10 @@ export default function TaxCalculator() {
     }
 
     try {
-      // আমাদের এক্সিওস সার্ভিস কল হচ্ছে
       const data = await checkTaxTaskStatus(taskId);
 
       if (!data.success) {
-        setError(data.error || 'টাস্ক স্ট্যাটাস চেক করতে সমস্যা হয়েছে।');
+        setError(data.error || 'টাস্ক স্ট্যাটাস চেক করতে সমস্যা হয়েছে।');
         setLoading(false);
         return;
       }
@@ -59,7 +59,7 @@ export default function TaxCalculator() {
       }
     } catch (err: any) {
       console.error('Polling error:', err);
-      // নেটওয়ার্ক ড্রপ করলেও পোলিং সচল থাকবে
+      // নেটওয়ার্ক সাময়িক ড্রপ করলেও পোলিং সচল রাখবে
       setTimeout(() => pollTaskStatus(taskId, currentRetry + 1), POLLING_INTERVAL);
     }
   };
@@ -71,11 +71,11 @@ export default function TaxCalculator() {
       setError(null);
       setTaxResult(null);
 
-      // হার্ডকোডেড অবজেক্টের বদলে সরাসরি ইউজারের ইনপুট করা ডেটা এপিআই-তে পাঠানো হচ্ছে
+      // ফর্ম থেকে আসা রিয়েল ডেটা অবজেক্টটি এপিআই-তে পাঠানো হচ্ছে
       const response = await initiateTaxCalculation(formData);
 
       if (response.success && response.taskId) {
-        // task queued, start polling
+        // টাস্ক কিউতে সাকসেসফুলি ঢুকেছে, এবার পোলিং শুরু করা যাক
         pollTaskStatus(response.taskId);
       } else {
         setError(response.error || 'টাস্ক তৈরি করা যায়নি।');
@@ -92,10 +92,10 @@ export default function TaxCalculator() {
     <div className="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-6 border mt-10">
       <div>
         <h1 className="text-xl font-bold text-gray-800">Pacutax Cost-Effective Engine</h1>
-        <p className="text-xs text-gray-500 mt-1">সঠিক তথ্য দিয়ে আপনার ট্যাক্স হিসাব করুন</p>
+        <p className="text-xs text-gray-500 mt-1">সঠিক তথ্য দিয়ে আপনার ট্যাক্স হিসাব করুন</p>
       </div>
 
-      {/* 📥 ইউজার ইনপুট ফর্ম (React Hook Form এর handleSubmit দিয়ে র‍্যাপ করা) */}
+      {/* 📥 ইউজার ইনপুট ফর্ম */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         
         {/* দেশ সিলেকশন */}
@@ -103,7 +103,7 @@ export default function TaxCalculator() {
           <label className="block text-sm font-medium text-gray-700 mb-1">দেশ নির্বাচন করুন</label>
           <select
             {...register('countryId')}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
           >
             <option value="BD">Bangladesh (BD)</option>
             <option value="IN">India (IN)</option>
@@ -124,9 +124,9 @@ export default function TaxCalculator() {
           {errors.fiscalYear && <p className="text-xs text-red-500 mt-1">{errors.fiscalYear.message}</p>}
         </div>
 
-        {/* মোট বার্ষিক আয় */}
+        {/* মোট বার্ষিক আয় */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">মোট বার্ষিক আয় (Gross Income)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">মোট বার্ষিক আয় (Gross Income)</label>
           <input
             type="number"
             placeholder="৳০.০০"
@@ -136,9 +136,9 @@ export default function TaxCalculator() {
           {errors.grossIncome && <p className="text-xs text-red-500 mt-1">{errors.grossIncome.message}</p>}
         </div>
 
-        {/* বিনিয়োগ */}
+        {/* বিনিয়োগ */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">মোট বিনিয়োগ / রেয়াতযোগ্য তহবিল (ঐচ্ছিক)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">মোট বিনিয়োগ / রেয়াতযোগ্য তহবিল (ঐচ্ছিক)</label>
           <input
             type="number"
             placeholder="৳০.০০"
@@ -170,8 +170,8 @@ export default function TaxCalculator() {
         <div className="p-4 bg-green-50 border border-green-200 rounded-md space-y-2">
           <h3 className="font-bold text-green-800 text-sm">হিসাব সম্পন্ন হয়েছে!</h3>
           <div className="text-sm text-gray-700 space-y-1">
-            <p>ট্যাক্সযোগ্য আয়: <span className="font-semibold">৳{taxResult.taxableIncome ?? 0}</span></p>
-            <p className="text-base text-emerald-900 font-bold">মোট প্রদেয় ট্যাক্স: ৳{taxResult.taxDue}</p>
+            <p>ট্যাক্সযোগ্য আয়: <span className="font-semibold">৳{taxResult.taxableIncome ?? 0}</span></p>
+            <p className="text-base text-emerald-900 font-bold">মোট প্রদেয় ট্যাক্স: ৳{taxResult.taxDue}</p>
           </div>
           {taxResult.metaData?.calculatedBy && (
             <div className="text-[10px] text-gray-400 mt-2 text-right">Engine: {taxResult.metaData.calculatedBy}</div>

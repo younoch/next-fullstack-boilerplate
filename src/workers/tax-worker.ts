@@ -1,10 +1,16 @@
 // src/workers/tax-worker.ts
-import { completeTaxTask, failTaxTask } from '@/features/tax-calculator/server/taxService';
+import { completeTaxTask, failTaxTask } from '@/features/tax-calculator/server/taxRepository';
 import { redis } from '@/lib/redis';
 import { logger } from '@/lib/logger';
+import { TaxFormInputs } from '@/features/tax-calculator/schemas/taxSchema';
 
-export const taxWorkerHandler = async (content: any) => {
-  const { taskId, payload } = content; // socketRoomId আর লাগছে না
+type TaxWorkerMessage = {
+  taskId: string;
+  payload: TaxFormInputs;
+};
+
+export const taxWorkerHandler = async (content: TaxWorkerMessage) => {
+  const { taskId, payload } = content;
 
   const key = `tax-job:${taskId}`;
   if (await redis.get(key)) {
@@ -15,7 +21,6 @@ export const taxWorkerHandler = async (content: any) => {
   logger.info({ taskId }, `📥 [Tax Worker] Processing Task ID: ${taskId}`);
   
   try {
-    // 🧠 ভারী ট্যাক্স ক্যালকুলেশন লজিক (৩ সেকেন্ডের ফেক ডিলে)
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const grossIncome = payload.grossIncome || 0;
@@ -33,7 +38,6 @@ export const taxWorkerHandler = async (content: any) => {
       metaData: { calculatedBy: 'Serverless-Worker-Polling-Engine' },
     };
 
-    // ডাটাবেসে সেভ এবং স্ট্যাটাস COMPLETED করা
     await completeTaxTask(taskId, calculationResult);
     logger.info({ taskId }, `💾 [Tax Worker] Task ${taskId} successfully updated in DB.`);
 
@@ -41,7 +45,6 @@ export const taxWorkerHandler = async (content: any) => {
 
   } catch (error: any) {
     logger.error({ err: error?.message, taskId }, `❌ [Tax Worker] Failed for Task ${taskId}`);
-    // ডাটাবেজে স্ট্যাটাস FAILED করা
     await failTaxTask(taskId, error.message || 'Calculation error');
     throw error; 
   }

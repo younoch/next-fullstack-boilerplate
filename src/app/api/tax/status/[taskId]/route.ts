@@ -1,10 +1,10 @@
 // src/app/api/tax/status/[taskId]/route.ts
 import { NextResponse } from 'next/server';
-import { getTaxTask } from '@/features/tax-calculator/server/taxService';
+import { getTaxTask } from '@/features/tax-calculator/server/taxRepository';
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ taskId: string }> }
+  { params }: { params: { taskId: string } }
 ) {
   try {
     const { taskId } = await params;

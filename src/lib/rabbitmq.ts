@@ -6,8 +6,8 @@ import { logger } from './logger';
 const url = process.env.RABBITMQ_URL || 'amqp://localhost';
 
 export const connection: AmqpConnectionManager = amqp.connect([url], {
-  heartbeatIntervalInSeconds: 5,
-  reconnectTimeInSeconds: 5,
+  heartbeatIntervalInSeconds: 10,
+  reconnectTimeInSeconds: 10,
 });
 
 connection.on('connect', () => logger.info('🚀 RabbitMQ Connected Successfully!'));
