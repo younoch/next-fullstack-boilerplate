@@ -52,3 +52,8 @@ export const fetchTaxBreakdown = async (calculationId: string) => {
   const response = await axios.get(`/api/tax/breakdown/${calculationId}`);
   return response.data;
 }
+
+export const fetchTaxTasks = async (page: number, limit: number) => {
+  const response = await axios.get(`/api/tax/tasks?page=${page}&limit=${limit}`);
+  return response.data;
+}

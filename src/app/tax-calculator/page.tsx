@@ -9,8 +9,8 @@ import { initiateTaxCalculation, checkTaxTaskStatus, fetchTaxBreakdown } from '@
 
 export default function TaxCalculator() {
   const [loading, setLoading] = useState(false);
-  const [taxResult, setTaxResult] = useState<any>(null);
-  const [breakdown, setBreakdown] = useState<any>(null);
+  const [taxResult, setTaxResult] = useState<{ taxableIncome: number; taxDue: number } | null>(null);
+  const [breakdown, setBreakdown] = useState<{ details: string[] } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // 🛠️ React Hook Form সেটআপ (Zod স্কিমার সাথে সিঙ্কড)

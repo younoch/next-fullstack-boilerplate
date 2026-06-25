@@ -100,6 +100,19 @@ export const getTaxTask = async (taskId: string) => {
   });
 };
 
+export const listTaxTasks = async (skip: number, take: number) => {
+  return await prisma.taxTask.findMany({
+    skip,
+    take,
+    orderBy: { createdAt: 'desc' },
+    select: {
+      id: true,
+      status: true,
+      createdAt: true,
+    },
+  });
+};
+
 export const getTaxCalculation = async (calculationId: string) => {
   return await prisma.taxCalculation.findUnique({
     where: { id: calculationId },

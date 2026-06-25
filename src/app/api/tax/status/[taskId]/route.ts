@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server';
 import { getTaxTask } from '@/features/tax-calculator/server/taxRepository';
 
 export async function GET(
-  request: Request,
   { params }: { params: { taskId: string } }
 ) {
   try {

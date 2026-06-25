@@ -10,7 +10,6 @@ export async function GET() {
       timestamp: new Date()
     };
 
-    // সরাসরি মেসেজ পাঠানো
     await channelWrapper.sendToQueue(QUEUES.TEST.name, message);
 
     return NextResponse.json({ success: true, message: "Sent via Modern Library!" });

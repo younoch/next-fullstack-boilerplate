@@ -16,9 +16,32 @@ const options: swaggerJSDoc.Options = {
         description: "Local Docker Development Server",
       },
     ],
+    components: {
+      schemas: {
+        TaxTask: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              example: 'task_12345',
+            },
+            status: {
+              type: 'string',
+              example: 'PENDING',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2026-06-25T12:00:00Z',
+            },
+          },
+          required: ['id', 'status', 'createdAt'],
+        },
+      },
+    },
   },
   // Ensure it scans your new modular monolith modules folder cleanly
-  apis: ["./src/app/api/**/*.ts", "./src/modules/**/*.ts"],
+  apis: ["src/app/api/**/*.ts", "src/modules/**/*.ts"],
 };
 
 const spec = swaggerJSDoc(options);
