@@ -11,14 +11,14 @@ const options: swaggerJSDoc.Options = {
     servers: [
       {
         url: "http://localhost:3000",
-        description: "Local Server",
+        description: "Local Docker Development Server",
       },
     ],
     components: {
       schemas: {},
     },
   },
-  apis: ["src/app/api/**/*.ts", "src/features/**/*.ts"],
+  apis: ["src/app/api/**/*.ts", "src/pages/api/**/*.ts"],
 };
 
 export const swaggerSpec = swaggerJSDoc(options);

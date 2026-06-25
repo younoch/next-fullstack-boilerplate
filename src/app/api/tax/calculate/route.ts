@@ -4,6 +4,60 @@ import { channelWrapper } from '@/lib/rabbitmq';
 import { QUEUES } from '@/lib/queues';
 import { createTaxTask } from '@/features/tax-calculator/server/taxRepository';
 
+/**
+ * @swagger
+ * /api/tax/calculate:
+ *   post:
+ *     summary: Queue a new tax calculation task
+ *     description: Create a tax processing task and enqueue it for background execution.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               payload:
+ *                 type: object
+ *                 properties:
+ *                   grossIncome:
+ *                     type: number
+ *                     example: 100000
+ *                   totalDeductions:
+ *                     type: number
+ *                     example: 5000
+ *                   countryId:
+ *                     type: string
+ *                     example: BD
+ *                   fiscalYear:
+ *                     type: string
+ *                     example: 2026-27
+ *                 required:
+ *                   - grossIncome
+ *                   - countryId
+ *                   - fiscalYear
+ *     responses:
+ *       200:
+ *         description: Task queued successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Tax calculation task queued successfully
+ *                 taskId:
+ *                   type: string
+ *                   example: task_12345
+ *       400:
+ *         description: Invalid request payload
+ *       500:
+ *         description: Internal server error
+ */
 export async function POST(request: Request) {
   try {
     const body = await request.json();
